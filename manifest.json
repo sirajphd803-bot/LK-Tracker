@@ -1,6 +1,6 @@
 {
-  "name": "Marks Register App",
-  "short_name": "MarksApp",
+  "name": "Little Kites Evaluation Tracker",
+  "short_name": "LK Tracker",
   "start_url": "./index.html",
   "display": "standalone",
   "background_color": "#F4F6F9",
