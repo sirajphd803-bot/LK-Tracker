@@ -1,0 +1,1089 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Little KITEs - GHS Trikkulam Evaluation Tracker</title>
+  
+  <!-- Google Fonts & FontAwesome -->
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <!-- Firebase App & Database Compat SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
+
+  <style>
+    :root {
+      --primary: #0284c7;
+      --primary-dark: #0369a1;
+      --secondary: #ec4899;
+      --accent-cyan: #06b6d4;
+      --bg-main: #f8fafc;
+      --card-bg: #ffffff;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --border-color: #e2e8f0;
+      --success: #10b981;
+      --warning: #f59e0b;
+      --danger: #ef4444;
+      --radius: 12px;
+      --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+
+    body {
+      background-color: var(--bg-main);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Header & Branding */
+    header {
+      background: #ffffff;
+      border-bottom: 1px solid var(--border-color);
+      padding: 1rem 1.5rem;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+    }
+
+    .header-container {
+      max-width: 1400px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .logo-container {
+      width: 52px;
+      height: 52px;
+      background: #fff;
+      border-radius: 12px;
+      padding: 4px;
+      border: 1px solid #f1f5f9;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+
+    .logo-svg {
+      width: 100%;
+      height: 100%;
+    }
+
+    .brand-title h1 {
+      font-size: 1.3rem;
+      font-weight: 800;
+      color: #0f172a;
+      letter-spacing: -0.02em;
+      line-height: 1.1;
+    }
+
+    .brand-title p {
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: var(--secondary);
+      letter-spacing: 0.05em;
+      margin-top: 2px;
+    }
+
+    .header-controls {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .sync-badge {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 6px 12px;
+      border-radius: 20px;
+      background: #f0fdf4;
+      color: #166534;
+      border: 1px solid #bbf7d0;
+    }
+
+    .sync-badge.syncing {
+      background: #fefce8;
+      color: #854d0e;
+      border-color: #fef08a;
+    }
+
+    .sync-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--success);
+    }
+
+    .btn {
+      padding: 0.55rem 1rem;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      border: none;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.2s ease;
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background: var(--primary-dark);
+    }
+
+    .btn-secondary {
+      background: #f1f5f9;
+      color: #334155;
+    }
+
+    .btn-secondary:hover {
+      background: #e2e8f0;
+    }
+
+    .btn-danger {
+      background: #fee2e2;
+      color: #991b1b;
+    }
+
+    .btn-danger:hover {
+      background: #fecaca;
+    }
+
+    /* Main Content */
+    main {
+      max-width: 1400px;
+      margin: 1.5rem auto;
+      padding: 0 1.5rem;
+      flex: 1;
+      width: 100%;
+    }
+
+    /* Batch Selector Navigation */
+    .batch-nav-container {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 2px solid #e2e8f0;
+      margin-bottom: 1.5rem;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .batch-tabs {
+      display: flex;
+      gap: 0.5rem;
+      overflow-x: auto;
+      padding-bottom: -2px;
+    }
+
+    .tab-btn {
+      padding: 0.75rem 1.25rem;
+      font-weight: 700;
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      background: transparent;
+      border: none;
+      border-bottom: 3px solid transparent;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.2s;
+    }
+
+    .tab-btn:hover {
+      color: var(--primary);
+    }
+
+    .tab-btn.active {
+      color: var(--primary);
+      border-bottom-color: var(--primary);
+    }
+
+    /* Action Toolbar */
+    .toolbar {
+      background: white;
+      border-radius: var(--radius);
+      padding: 1rem;
+      border: 1px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+      flex-wrap: wrap;
+      box-shadow: var(--shadow);
+    }
+
+    .search-box {
+      position: relative;
+      flex: 1;
+      min-width: 240px;
+    }
+
+    .search-box i {
+      position: absolute;
+      left: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-muted);
+    }
+
+    .search-input {
+      width: 100%;
+      padding: 0.55rem 0.75rem 0.55rem 2.25rem;
+      border-radius: 8px;
+      border: 1px solid var(--border-color);
+      outline: none;
+      font-size: 0.875rem;
+    }
+
+    .search-input:focus {
+      border-color: var(--primary);
+    }
+
+    /* Table Styling */
+    .table-card {
+      background: white;
+      border-radius: var(--radius);
+      border: 1px solid var(--border-color);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      margin-bottom: 2rem;
+    }
+
+    .table-wrapper {
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+      font-size: 0.85rem;
+    }
+
+    th {
+      background: #f8fafc;
+      color: #334155;
+      font-weight: 700;
+      padding: 0.85rem 0.75rem;
+      border-bottom: 1px solid var(--border-color);
+      border-right: 1px solid #f1f5f9;
+      white-space: nowrap;
+    }
+
+    td {
+      padding: 0.75rem;
+      border-bottom: 1px solid var(--border-color);
+      border-right: 1px solid #f8fafc;
+      color: var(--text-main);
+      vertical-align: middle;
+    }
+
+    tr:hover {
+      background-color: #f8fafc;
+    }
+
+    .student-name {
+      font-weight: 700;
+      color: #0f172a;
+    }
+
+    .division-input {
+      width: 50px;
+      padding: 4px;
+      text-align: center;
+      border: 1px solid var(--border-color);
+      border-radius: 4px;
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+
+    .score-input {
+      width: 55px;
+      padding: 4px 6px;
+      text-align: center;
+      border: 1px solid var(--border-color);
+      border-radius: 4px;
+      font-size: 0.85rem;
+    }
+
+    .score-input:focus, .division-input:focus {
+      outline: none;
+      border-color: var(--primary);
+      background: #f0f9ff;
+    }
+
+    /* Total & Badge Styling */
+    .score-total {
+      font-weight: 800;
+      color: var(--primary-dark);
+    }
+
+    .percentage-text {
+      font-weight: 700;
+      color: #334155;
+    }
+
+    .grade-badge {
+      display: inline-block;
+      padding: 3px 8px;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      font-weight: 800;
+    }
+
+    .grade-a {
+      background: #dcfce7;
+      color: #15803d;
+      border: 1px solid #bbf7d0;
+    }
+
+    .grade-none {
+      background: #f1f5f9;
+      color: #94a3b8;
+    }
+
+    /* Modal Styles */
+    .modal-overlay {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(15, 23, 42, 0.5);
+      backdrop-filter: blur(4px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s ease;
+    }
+
+    .modal-overlay.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .modal {
+      background: white;
+      width: 90%;
+      max-width: 500px;
+      border-radius: var(--radius);
+      padding: 1.5rem;
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1rem;
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 0.75rem;
+    }
+
+    .modal-header h3 {
+      font-size: 1.1rem;
+      font-weight: 700;
+    }
+
+    .form-group {
+      margin-bottom: 1rem;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 0.8rem;
+      font-weight: 700;
+      margin-bottom: 0.4rem;
+      color: #475569;
+    }
+
+    .form-control {
+      width: 100%;
+      padding: 0.6rem;
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      font-size: 0.9rem;
+    }
+
+    /* Footer */
+    footer {
+      text-align: center;
+      padding: 1.5rem;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      border-top: 1px solid var(--border-color);
+      background: white;
+      margin-top: auto;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- App Header -->
+  <header>
+    <div class="header-container">
+      <div class="brand">
+        <div class="logo-container">
+          <!-- Little KITEs Emblem SVG -->
+          <svg class="logo-svg" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M 60 150 C 30 110 30 50 85 30 C 130 15 170 50 150 110 C 130 150 80 170 60 150 Z" stroke="#1e293b" stroke-width="10" fill="none"/>
+            <path d="M 60 150 L 35 180 M 60 150 L 80 180" stroke="#1e293b" stroke-width="10" stroke-linecap="round"/>
+            <path d="M 50 110 C 50 110 70 125 110 110 C 150 95 140 60 140 60 C 140 60 90 60 50 110 Z" fill="#38bdf8"/>
+            <circle cx="95" cy="55" r="12" fill="#ec4899"/>
+            <path d="M 55 35 L 35 30 L 45 45 Z" fill="#ec4899"/>
+          </svg>
+        </div>
+        <div class="brand-title">
+          <h1>LITTLE KITEs</h1>
+          <p>GHS TRIKKULAM EVALUATION TRACKER</p>
+        </div>
+      </div>
+
+      <div class="header-controls">
+        <div class="sync-badge" id="syncBadge">
+          <div class="sync-dot"></div>
+          <span id="syncText">Connected Live</span>
+        </div>
+        <button class="btn btn-secondary" id="modeToggleBtn" onclick="toggleTeacherMode()">
+          <i class="fa-solid fa-lock"></i> Teacher Mode
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Container -->
+  <main>
+    <!-- Batch Selector Tabs -->
+    <div class="batch-nav-container">
+      <div class="batch-tabs" id="batchTabsContainer">
+        <!-- Dynamic Batch Tabs Injected Here -->
+      </div>
+      <div id="teacherBatchControls" style="display: none;">
+        <button class="btn btn-primary" onclick="openAddBatchModal()">
+          <i class="fa-solid fa-plus"></i> Add New Batch
+        </button>
+      </div>
+    </div>
+
+    <!-- Action Toolbar -->
+    <div class="toolbar">
+      <div class="search-box">
+        <i class="fa-solid fa-magnifying-glass"></i>
+        <input type="text" id="searchInput" class="search-input" placeholder="Search by name, admission no, or division..." oninput="renderTable()">
+      </div>
+
+      <div style="display: flex; gap: 0.5rem;" id="teacherStudentControls">
+        <!-- Displayed in Teacher Mode -->
+      </div>
+    </div>
+
+    <!-- Evaluation Table Card -->
+    <div class="table-card">
+      <div class="table-wrapper">
+        <table id="evaluationTable">
+          <thead>
+            <tr>
+              <th rowspan="2">#</th>
+              <th rowspan="2">Adm No</th>
+              <th rowspan="2">Student Name</th>
+              <th rowspan="2">Div</th>
+              <th colspan="2" style="text-align: center; background: #f1f5f9;">Class 8 (100)</th>
+              <th colspan="6" style="text-align: center; background: #e2e8f0;">Class 9 (180)</th>
+              <th colspan="4" style="text-align: center; background: #cbd5e1;">Class 10 (220)</th>
+              <th rowspan="2">Total Score</th>
+              <th rowspan="2">%</th>
+              <th rowspan="2">Grade</th>
+              <th rowspan="2" class="teacher-only-col" style="display: none;">Actions</th>
+            </tr>
+            <tr>
+              <!-- Class 8 -->
+              <th title="Routine Classes (15 x 5 = 75)">Routine (75)</th>
+              <th title="Digital Portfolio (25)">Portfolio (25)</th>
+              <!-- Class 9 -->
+              <th title="Routine Classes (15 x 5 = 75)">Routine (75)</th>
+              <th title="School Camp Phase 1 (10)">Camp P1 (10)</th>
+              <th title="School Camp Phase 1 Assign (15)">P1 Assign (15)</th>
+              <th title="School Camp Phase 2 (10)">Camp P2 (10)</th>
+              <th title="School Camp Phase 2 Assign (15)">P2 Assign (15)</th>
+              <th title="Digital Portfolio (25)">Portfolio (25)</th>
+              <!-- Class 10 -->
+              <th title="Personal Assignment (100)">Personal (100)</th>
+              <th title="Group Assignment (80)">Group (80)</th>
+              <th title="Training Other Children (20)">Training (20)</th>
+              <th title="Other IT Activities (20)">Other IT (20)</th>
+            </tr>
+          </thead>
+          <tbody id="studentTableBody">
+            <!-- Dynamic Student Rows -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer>
+    <p>&copy; Little KITEs IT Club - GHS Trikkulam | Real-Time Sync Powered by Firebase</p>
+  </footer>
+
+  <!-- PIN Modal -->
+  <div class="modal-overlay" id="pinModal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3>Teacher Mode Access</h3>
+        <button class="btn btn-secondary" onclick="closeModal('pinModal')"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div class="form-group">
+        <label>Enter Security PIN Code</label>
+        <input type="password" id="pinInput" class="form-control" placeholder="Default PIN: 1234">
+      </div>
+      <div style="display: flex; justify-content: flex-end; gap: 0.5rem; margin-top: 1rem;">
+        <button class="btn btn-secondary" onclick="closeModal('pinModal')">Cancel</button>
+        <button class="btn btn-primary" onclick="verifyPin()">Unlock</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add Student Modal -->
+  <div class="modal-overlay" id="addStudentModal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3>Add New Student</h3>
+        <button class="btn btn-secondary" onclick="closeModal('addStudentModal')"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div class="form-group">
+        <label>Admission Number</label>
+        <input type="text" id="newAdmNo" class="form-control" placeholder="e.g. 25451">
+      </div>
+      <div class="form-group">
+        <label>Student Full Name</label>
+        <input type="text" id="newName" class="form-control" placeholder="e.g. AFLAH K">
+      </div>
+      <div class="form-group">
+        <label>Class & Division</label>
+        <input type="text" id="newDiv" class="form-control" placeholder="e.g. 8B">
+      </div>
+      <div style="display: flex; justify-content: flex-end; gap: 0.5rem; margin-top: 1rem;">
+        <button class="btn btn-secondary" onclick="closeModal('addStudentModal')">Cancel</button>
+        <button class="btn btn-primary" onclick="saveNewStudent()">Add Student</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add Batch Modal -->
+  <div class="modal-overlay" id="addBatchModal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3>Add New Batch</h3>
+        <button class="btn btn-secondary" onclick="closeModal('addBatchModal')"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div class="form-group">
+        <label>Batch ID (Key)</label>
+        <input type="text" id="newBatchId" class="form-control" placeholder="e.g. batch_2027_2030">
+      </div>
+      <div class="form-group">
+        <label>Batch Title</label>
+        <input type="text" id="newBatchTitle" class="form-control" placeholder="e.g. 2027-2030 Batch">
+      </div>
+      <div style="display: flex; justify-content: flex-end; gap: 0.5rem; margin-top: 1rem;">
+        <button class="btn btn-secondary" onclick="closeModal('addBatchModal')">Cancel</button>
+        <button class="btn btn-primary" onclick="saveNewBatch()">Create Batch</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Application Logic & Firebase Configuration -->
+  <script>
+    // Exact Firebase Configuration
+    const firebaseConfig = {
+      apiKey: "AIzaSyAWCgfZYI-doImtWgfzP5GREvyMUBaUsQM",
+      authDomain: "lk-ghs-trikkulam.firebaseapp.com",
+      databaseURL: "https://lk-ghs-trikkulam-default-rtdb.firebaseio.com",
+      projectId: "lk-ghs-trikkulam",
+      storageBucket: "lk-ghs-trikkulam.firebasestorage.app",
+      messagingSenderId: "903661112200",
+      appId: "1:903661112200:web:64d02c87591386fe93083d"
+    };
+
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+
+    // App State
+    let isTeacher = false;
+    const TEACHER_PIN = "1234";
+    let activeBatchKey = "batch_2026_2029";
+    
+    // Evaluation Scheme Maximum Weights
+    const SCHEME_MAX = {
+      c8_r: 75, c8_p: 25,
+      c9_r: 75, c9_p1: 10, c9_a1: 15, c9_p2: 10, c9_a2: 15, c9_p: 25,
+      c10_p: 100, c10_g: 80, c10_t: 20, c10_o: 20
+    };
+
+    // Default Pre-loaded Batch Rosters
+    const initialBatches = {
+      "batch_2026_2029": {
+        title: "2026-29 Batch",
+        students: [
+          { adm: "25451", name: "AFLAH K", div: "8B" },
+          { adm: "25436", name: "AMARNATH V", div: "8B" },
+          { adm: "23365", name: "ANANYA A", div: "8B" },
+          { adm: "24666", name: "ANASWARA.K.P", div: "8A" },
+          { adm: "24858", name: "AYISHA HUMAIRA K P", div: "8C" },
+          { adm: "23381", name: "AYISHA RAFNI C", div: "8D" },
+          { adm: "25474", name: "DEVAK P", div: "8A" },
+          { adm: "23427", name: "DIYON.V.P", div: "8B" },
+          { adm: "25405", name: "FATHIMA DHIYA.K", div: "8A" },
+          { adm: "24264", name: "FATHIMA NIYA T", div: "8A" },
+          { adm: "24622", name: "FATHIMA RAJA V K", div: "8F" },
+          { adm: "23364", name: "FATHIMA RANA", div: "8D" },
+          { adm: "24860", name: "FATHIMA SHAHMA K P", div: "8C" },
+          { adm: "23421", name: "GOKUL K", div: "8B" },
+          { adm: "23440", name: "HAAMID FOUZAN V P", div: "8B" },
+          { adm: "24769", name: "MOHAMED RIFAN.P", div: "8A" },
+          { adm: "23632", name: "MOHAMMED ASHAD THAPPY", div: "8E" },
+          { adm: "24782", name: "MOHAMMED HASHIR H V", div: "8E" },
+          { adm: "25127", name: "MUHAMMAD NIHAD C", div: "8A" },
+          { adm: "25485", name: "MUHAMMED HISHAM V", div: "8B" },
+          { adm: "24778", name: "MUHAMMED RIZVAN", div: "8B" },
+          { adm: "24898", name: "MUHAMMED RIZVAN.C.P", div: "8F" },
+          { adm: "23444", name: "NEZMIN K.K", div: "8F" },
+          { adm: "23587", name: "RISVANA THESNI R V", div: "8E" },
+          { adm: "23437", name: "SAHALA SHARIN V", div: "8C" },
+          { adm: "23428", name: "SANHA FATHIMA.P", div: "8F" },
+          { adm: "25419", name: "SAYYID MUHAVIYA THANGAL C", div: "8A" },
+          { adm: "25423", name: "SAYYIDATH FATHIMA JAHANA K.P", div: "8A" },
+          { adm: "25329", name: "SAYYIDATH FATHIMA NAJIYA", div: "8E" },
+          { adm: "24826", name: "SAYYIDHATH ATHIFA BEEVI. K.P.", div: "8C" },
+          { adm: "25029", name: "SHAHNA MARIYAM.C", div: "8C" },
+          { adm: "23367", name: "SHANIBA P M", div: "8E" }
+        ]
+      },
+      "batch_2025_2028": {
+        title: "2025-28 Batch",
+        students: [
+          { adm: "24001", name: "ABDUL RAHEEM.P", div: "9A" },
+          { adm: "24002", name: "ADHERSH.M", div: "9A" },
+          { adm: "24003", name: "AJWA.K.P", div: "9B" },
+          { adm: "24004", name: "DEVANANDA.E.P", div: "9B" },
+          { adm: "24005", name: "FATHIMA BANIYA C T", div: "9B" },
+          { adm: "24006", name: "FATHIMA NABA.THAYYIL", div: "9C" },
+          { adm: "24007", name: "FATHIMA RAGHDA V P", div: "9C" },
+          { adm: "24008", name: "FATHIMA SHAMNA.V V", div: "9D" },
+          { adm: "24009", name: "FATHIMATH SINANA.K", div: "9D" },
+          { adm: "24010", name: "HANA SAFOORA.C.T", div: "9D" },
+          { adm: "24011", name: "HIDHA FATHIMA CHAKKIPARAMBATH", div: "9E" },
+          { adm: "24012", name: "JIYA FATHIMA.C.K", div: "9E" },
+          { adm: "24013", name: "MOHAMMED RANISH MUTTICHIRAKKAL", div: "9E" },
+          { adm: "24014", name: "MUBASHIR C", div: "9F" },
+          { adm: "24015", name: "MUBASHIR.M", div: "9F" },
+          { adm: "24016", name: "MUHAMMAD FAHAD K P", div: "9A" },
+          { adm: "24017", name: "MUHAMMED AZLAN C T", div: "9A" },
+          { adm: "24018", name: "MUHAMMED HAFIZ.M.N", div: "9B" },
+          { adm: "24019", name: "MUHAMMED MUSHAB.A P", div: "9B" },
+          { adm: "24020", name: "MUHAMMED NAFIH.P.M", div: "9C" },
+          { adm: "24021", name: "MUHAMMED NIFAAL T", div: "9C" },
+          { adm: "24022", name: "MUHAMMED RABEEH K", div: "9D" },
+          { adm: "24023", name: "MUHAMMED RAYAN U", div: "9D" },
+          { adm: "24024", name: "MUHAMMED SHAHAD", div: "9E" },
+          { adm: "24025", name: "REVATHY RAJEEV.T", div: "9E" },
+          { adm: "24026", name: "RIFA FEBIN.K.K", div: "9F" },
+          { adm: "24027", name: "RIYA SAFIYA.M", div: "9F" },
+          { adm: "24028", name: "RUBA M N", div: "9F" },
+          { adm: "24029", name: "SANHA FATHIMA V P", div: "9A" },
+          { adm: "24030", name: "SHIFA SHERIN.P", div: "9B" },
+          { adm: "24031", name: "SREERADHYA.P", div: "9C" }
+        ]
+      },
+      "batch_2024_2027": {
+        title: "2024-27 Batch",
+        students: [
+          { adm: "23040", name: "ADIL RAHMAN PK", div: "10A" },
+          { adm: "23885", name: "ALOK.T", div: "10A" },
+          { adm: "23676", name: "ANUPAMA M .M", div: "10A" },
+          { adm: "25001", name: "ATHULYA V V", div: "10B" },
+          { adm: "22891", name: "FATHIMA ATHIFA BEEVI K", div: "10B" },
+          { adm: "22889", name: "FATHIMA HANA", div: "10B" },
+          { adm: "24603", name: "FATHIMA NAJA.K", div: "10C" },
+          { adm: "24987", name: "FATHIMA RUSHDA", div: "10C" },
+          { adm: "24109", name: "FATHIMA TANHA", div: "10C" },
+          { adm: "22894", name: "FATHIMA THANHA K.K", div: "10D" },
+          { adm: "24102", name: "FINOONA PARVEEN. V.P", div: "10D" },
+          { adm: "22877", name: "MASHHAD K", div: "10D" },
+          { adm: "24548", name: "MASIN V P", div: "10E" },
+          { adm: "24142", name: "MOHAMMED RASHAL.K", div: "10E" },
+          { adm: "24121", name: "MOHAMMED RIDAN M", div: "10E" },
+          { adm: "24101", name: "MOHAMMED SINAN .M", div: "10F" },
+          { adm: "25248", name: "MUHAMMAD MUZAMMIL .P", div: "10F" },
+          { adm: "24106", name: "MUHAMMED ANFAD.V.P", div: "10A" },
+          { adm: "23889", name: "MUHAMMED NAFIH P", div: "10B" },
+          { adm: "22927", name: "MUHAMMED SHAFEEH V P", div: "10B" },
+          { adm: "22843", name: "MUHAMMED SHAMMAS A P", div: "10C" },
+          { adm: "24119", name: "MUHAMMED SINAN P", div: "10C" },
+          { adm: "22904", name: "MUSAINA FARSANA", div: "10D" },
+          { adm: "22880", name: "NAVANEETH KRISHNA P T", div: "10D" },
+          { adm: "24990", name: "NIVEDYA V", div: "10E" },
+          { adm: "24989", name: "RINSHIDA FATHIMA.K", div: "10E" },
+          { adm: "22907", name: "SHIBIN M", div: "10F" }
+        ]
+      }
+    };
+
+    let appData = {};
+
+    // App Initialization & Real-Time Sync Setup
+    window.addEventListener('DOMContentLoaded', () => {
+      initRealtimeSync();
+    });
+
+    function initRealtimeSync() {
+      const syncBadge = document.getElementById('syncBadge');
+      const syncText = document.getElementById('syncText');
+
+      // Reference to Firebase Database root
+      const appRef = db.ref('little_kites_app_data');
+
+      // Sync state listener
+      db.ref('.info/connected').on('value', (snap) => {
+        if (snap.val() === true) {
+          syncBadge.classList.remove('syncing');
+          syncText.innerText = "Connected Live";
+        } else {
+          syncBadge.classList.add('syncing');
+          syncText.innerText = "Connecting...";
+        }
+      });
+
+      // Realtime Data Listener
+      appRef.on('value', (snapshot) => {
+        const val = snapshot.val();
+        if (val) {
+          appData = val;
+        } else {
+          // Initialize DB with default batches if empty
+          appData = initialBatches;
+          appRef.set(initialBatches);
+        }
+        
+        // Ensure active batch exists
+        const keys = Object.keys(appData);
+        if (keys.length > 0 && !appData[activeBatchKey]) {
+          activeBatchKey = keys[0];
+        }
+        
+        renderBatchTabs();
+        renderTable();
+      });
+    }
+
+    // Save changes live to Firebase
+    function saveToFirebase() {
+      db.ref('little_kites_app_data').set(appData);
+    }
+
+    // Teacher Mode Logic
+    function toggleTeacherMode() {
+      if (!isTeacher) {
+        document.getElementById('pinInput').value = '';
+        document.getElementById('pinModal').classList.add('active');
+      } else {
+        isTeacher = false;
+        updateTeacherUI();
+      }
+    }
+
+    function verifyPin() {
+      const pin = document.getElementById('pinInput').value;
+      if (pin === TEACHER_PIN) {
+        isTeacher = true;
+        closeModal('pinModal');
+        updateTeacherUI();
+      } else {
+        alert('Incorrect PIN!');
+      }
+    }
+
+    function updateTeacherUI() {
+      const btn = document.getElementById('modeToggleBtn');
+      const batchControls = document.getElementById('teacherBatchControls');
+      const studentControls = document.getElementById('teacherStudentControls');
+
+      if (isTeacher) {
+        btn.innerHTML = '<i class="fa-solid fa-unlock"></i> Exit Teacher Mode';
+        btn.classList.replace('btn-secondary', 'btn-primary');
+        batchControls.style.display = 'block';
+        studentControls.innerHTML = `
+          <button class="btn btn-primary" onclick="openAddStudentModal()"><i class="fa-solid fa-user-plus"></i> Add Student</button>
+        `;
+      } else {
+        btn.innerHTML = '<i class="fa-solid fa-lock"></i> Teacher Mode';
+        btn.classList.replace('btn-primary', 'btn-secondary');
+        batchControls.style.display = 'none';
+        studentControls.innerHTML = '';
+      }
+
+      // Toggle action columns
+      document.querySelectorAll('.teacher-only-col').forEach(col => {
+        col.style.display = isTeacher ? 'table-cell' : 'none';
+      });
+
+      renderTable();
+    }
+
+    // Modal Helpers
+    function closeModal(id) {
+      document.getElementById(id).classList.remove('active');
+    }
+
+    function openAddBatchModal() {
+      document.getElementById('addBatchModal').classList.add('active');
+    }
+
+    function openAddStudentModal() {
+      document.getElementById('addStudentModal').classList.add('active');
+    }
+
+    // Dynamic Tab Navigation
+    function renderBatchTabs() {
+      const container = document.getElementById('batchTabsContainer');
+      container.innerHTML = '';
+
+      Object.keys(appData).forEach(key => {
+        const batch = appData[key];
+        const tab = document.createElement('button');
+        tab.className = `tab-btn ${key === activeBatchKey ? 'active' : ''}`;
+        tab.innerText = batch.title;
+        tab.onclick = () => {
+          activeBatchKey = key;
+          renderBatchTabs();
+          renderTable();
+        };
+        container.appendChild(tab);
+      });
+    }
+
+    // Calculation & Table Rendering Logic
+    function renderTable() {
+      const tbody = document.getElementById('studentTableBody');
+      tbody.innerHTML = '';
+
+      const currentBatch = appData[activeBatchKey];
+      if (!currentBatch || !currentBatch.students) return;
+
+      const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+
+      currentBatch.students.forEach((student, index) => {
+        // Search Filter
+        if (
+          searchTerm &&
+          !student.name.toLowerCase().includes(searchTerm) &&
+          !student.adm.toLowerCase().includes(searchTerm) &&
+          !(student.div || '').toLowerCase().includes(searchTerm)
+        ) {
+          return;
+        }
+
+        const scores = student.scores || {};
+
+        // Calculate Dynamic Evaluated Max & Total Score Earned
+        let totalScore = 0;
+        let dynamicMax = 0;
+
+        Object.keys(SCHEME_MAX).forEach(field => {
+          const val = parseFloat(scores[field]);
+          if (!isNaN(val)) {
+            totalScore += val;
+            dynamicMax += SCHEME_MAX[field];
+          }
+        });
+
+        // Calculate Percentage against Evaluated Components
+        let percentage = 0;
+        if (dynamicMax > 0) {
+          percentage = (totalScore / dynamicMax) * 100;
+        }
+
+        const isAGrade = dynamicMax > 0 && percentage >= 80;
+
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>${index + 1}</td>
+          <td>${student.adm}</td>
+          <td class="student-name">${student.name}</td>
+          <td>
+            ${isTeacher 
+              ? `<input type="text" class="division-input" value="${student.div || ''}" onchange="updateStudentDiv(${index}, this.value)">`
+              : `<strong>${student.div || '-'}</strong>`
+            }
+          </td>
+          
+          <!-- Class 8 Scores -->
+          ${renderScoreCell(index, 'c8_r', scores.c8_r, 75)}
+          ${renderScoreCell(index, 'c8_p', scores.c8_p, 25)}
+          
+          <!-- Class 9 Scores -->
+          ${renderScoreCell(index, 'c9_r', scores.c9_r, 75)}
+          ${renderScoreCell(index, 'c9_p1', scores.c9_p1, 10)}
+          ${renderScoreCell(index, 'c9_a1', scores.c9_a1, 15)}
+          ${renderScoreCell(index, 'c9_p2', scores.c9_p2, 10)}
+          ${renderScoreCell(index, 'c9_a2', scores.c9_a2, 15)}
+          ${renderScoreCell(index, 'c9_p', scores.c9_p, 25)}
+          
+          <!-- Class 10 Scores -->
+          ${renderScoreCell(index, 'c10_p', scores.c10_p, 100)}
+          ${renderScoreCell(index, 'c10_g', scores.c10_g, 80)}
+          ${renderScoreCell(index, 'c10_t', scores.c10_t, 20)}
+          ${renderScoreCell(index, 'c10_o', scores.c10_o, 20)}
+          
+          <!-- Dynamic Results -->
+          <td class="score-total">${dynamicMax > 0 ? totalScore : '-'}</td>
+          <td class="percentage-text">${dynamicMax > 0 ? percentage.toFixed(1) + '%' : '-'}</td>
+          <td>
+            ${isAGrade 
+              ? `<span class="grade-badge grade-a"><i class="fa-solid fa-star"></i> A Grade</span>`
+              : `<span class="grade-badge grade-none">-</span>`
+            }
+          </td>
+          
+          <td class="teacher-only-col" style="display: ${isTeacher ? 'table-cell' : 'none'};">
+            <button class="btn btn-danger" style="padding: 4px 8px; font-size: 0.75rem;" onclick="deleteStudent(${index})">
+              <i class="fa-solid fa-trash"></i>
+            </button>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function renderScoreCell(studentIdx, field, val, maxVal) {
+      if (isTeacher) {
+        return `<td><input type="number" min="0" max="${maxVal}" class="score-input" value="${val !== undefined ? val : ''}" onchange="updateScore(${studentIdx}, '${field}', this.value, ${maxVal})"></td>`;
+      } else {
+        return `<td>${val !== undefined && val !== '' ? val : '-'}</td>`;
+      }
+    }
+
+    // Data Modification Actions (Live Sync Triggered)
+    function updateStudentDiv(index, val) {
+      if (!isTeacher) return;
+      appData[activeBatchKey].students[index].div = val;
+      saveToFirebase();
+    }
+
+    function updateScore(index, field, val, maxVal) {
+      if (!isTeacher) return;
+      const numVal = parseFloat(val);
+      
+      if (!appData[activeBatchKey].students[index].scores) {
+        appData[activeBatchKey].students[index].scores = {};
+      }
+
+      if (val === '' || isNaN(numVal)) {
+        delete appData[activeBatchKey].students[index].scores[field];
+      } else {
+        if (numVal < 0 || numVal > maxVal) {
+          alert(`Score must be between 0 and ${maxVal}`);
+          renderTable();
+          return;
+        }
+        appData[activeBatchKey].students[index].scores[field] = numVal;
+      }
+
+      saveToFirebase();
+    }
+
+    function saveNewStudent() {
+      const adm = document.getElementById('newAdmNo').value.trim();
+      const name = document.getElementById('newName').value.trim();
+      const div = document.getElementById('newDiv').value.trim();
+
+      if (!adm || !name) {
+        alert('Admission Number and Name are required!');
+        return;
+      }
+
+      if (!appData[activeBatchKey].students) {
+        appData[activeBatchKey].students = [];
+      }
+
+      appData[activeBatchKey].students.push({
+        adm: adm,
+        name: name,
+        div: div,
+        scores: {}
+      });
+
+      saveToFirebase();
+      closeModal('addStudentModal');
+      document.getElementById('newAdmNo').value = '';
+      document.getElementById('newName').value = '';
+      document.getElementById('newDiv').value = '';
+    }
+
+    function deleteStudent(index) {
+      if (confirm('Are you sure you want to remove this student?')) {
+        appData[activeBatchKey].students.splice(index, 1);
+        saveToFirebase();
+      }
+    }
+
+    function saveNewBatch() {
+      const key = document.getElementById('newBatchId').value.trim().toLowerCase().replace(/\s+/g, '_');
+      const title = document.getElementById('newBatchTitle').value.trim();
+
+      if (!key || !title) {
+        alert('Both Batch ID and Title are required!');
+        return;
+      }
+
+      if (appData[key]) {
+        alert('A batch with this key already exists!');
+        return;
+      }
+
+      appData[key] = {
+        title: title,
+        students: []
+      };
+
+      activeBatchKey = key;
+      saveToFirebase();
+      closeModal('addBatchModal');
+      document.getElementById('newBatchId').value = '';
+      document.getElementById('newBatchTitle').value = '';
+    }
+  </script>
+</body>
+</html>
