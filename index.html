@@ -518,7 +518,7 @@
       </div>
       <div class="form-group">
         <label>Enter Security PIN Code</label>
-        <input type="password" id="pinInput" class="form-control" placeholder="Default PIN: lk26">
+        <input type="password" id="pinInput" class="form-control" placeholder="Default PIN: Password">
       </div>
       <div style="display: flex; justify-content: flex-end; gap: 0.5rem; margin-top: 1rem;">
         <button class="btn btn-secondary" onclick="closeModal('pinModal')">Cancel</button>
@@ -591,7 +591,7 @@
     const db = firebase.database();
 
     let isTeacher = false;
-    const TEACHER_PIN = "1234";
+    const TEACHER_PIN = "lk26";
     let activeBatchKey = "batch_2026_2029";
     
     // Evaluation Scheme Weight Matrix (Updated Total 180 for Class 9)
