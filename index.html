@@ -3,10 +3,10 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#ffffff" />
+  <meta name="msapplication-navbutton-color" content="#ffffff" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
   <title>Little KITEs - GHS Trikkulam Evaluation Tracker</title>
-  <link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#1487b5">
-<link rel="apple-touch-icon" href="icon.png">
   
   <!-- Google Fonts & FontAwesome -->
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -21,17 +21,14 @@
       --primary: #0284c7;
       --primary-dark: #0369a1;
       --secondary: #ec4899;
-      --accent-cyan: #06b6d4;
-      --bg-main: #f8fafc;
+      --bg-main: #ffffff;
       --card-bg: #ffffff;
       --text-main: #0f172a;
       --text-muted: #64748b;
-      --border-color: #e2e8f0;
+      --border-color: #cbd5e1;
       --success: #10b981;
-      --warning: #f59e0b;
-      --danger: #ef4444;
       --radius: 12px;
-      --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+      --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
     }
 
     * {
@@ -49,10 +46,10 @@
       flex-direction: column;
     }
 
-    /* Header & Branding */
+    /* Header */
     header {
       background: #ffffff;
-      border-bottom: 1px solid var(--border-color);
+      border-bottom: 1px solid #e2e8f0;
       padding: 1rem 1.5rem;
       position: sticky;
       top: 0;
@@ -61,7 +58,7 @@
     }
 
     .header-container {
-      max-width: 1400px;
+      max-width: 1500px;
       margin: 0 auto;
       display: flex;
       align-items: center;
@@ -77,8 +74,8 @@
     }
 
     .logo-container {
-      width: 52px;
-      height: 52px;
+      width: 48px;
+      height: 48px;
       background: #fff;
       border-radius: 12px;
       padding: 4px;
@@ -86,7 +83,6 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
     }
 
     .logo-svg {
@@ -95,18 +91,16 @@
     }
 
     .brand-title h1 {
-      font-size: 1.3rem;
+      font-size: 1.25rem;
       font-weight: 800;
       color: #0f172a;
-      letter-spacing: -0.02em;
       line-height: 1.1;
     }
 
     .brand-title p {
-      font-size: 0.82rem;
-      font-weight: 600;
+      font-size: 0.8rem;
+      font-weight: 700;
       color: var(--secondary);
-      letter-spacing: 0.05em;
       margin-top: 2px;
     }
 
@@ -178,39 +172,32 @@
       color: #991b1b;
     }
 
-    .btn-danger:hover {
-      background: #fecaca;
-    }
-
-    /* Main Content */
+    /* Main Area */
     main {
-      max-width: 1400px;
-      margin: 1.5rem auto;
-      padding: 0 1.5rem;
+      max-width: 1500px;
+      margin: 1.2rem auto;
+      padding: 0 1rem;
       flex: 1;
       width: 100%;
     }
 
-    /* Batch Selector Navigation */
     .batch-nav-container {
       display: flex;
       align-items: center;
       justify-content: space-between;
       border-bottom: 2px solid #e2e8f0;
-      margin-bottom: 1.5rem;
+      margin-bottom: 1.2rem;
       gap: 1rem;
-      flex-wrap: wrap;
     }
 
     .batch-tabs {
       display: flex;
       gap: 0.5rem;
       overflow-x: auto;
-      padding-bottom: -2px;
     }
 
     .tab-btn {
-      padding: 0.75rem 1.25rem;
+      padding: 0.65rem 1.1rem;
       font-weight: 700;
       font-size: 0.9rem;
       color: var(--text-muted);
@@ -219,11 +206,6 @@
       border-bottom: 3px solid transparent;
       cursor: pointer;
       white-space: nowrap;
-      transition: all 0.2s;
-    }
-
-    .tab-btn:hover {
-      color: var(--primary);
     }
 
     .tab-btn.active {
@@ -231,25 +213,22 @@
       border-bottom-color: var(--primary);
     }
 
-    /* Action Toolbar */
     .toolbar {
       background: white;
       border-radius: var(--radius);
-      padding: 1rem;
-      border: 1px solid var(--border-color);
+      padding: 0.8rem 1rem;
+      border: 1px solid #e2e8f0;
       display: flex;
       align-items: center;
       justify-content: space-between;
       gap: 1rem;
-      margin-bottom: 1.5rem;
-      flex-wrap: wrap;
-      box-shadow: var(--shadow);
+      margin-bottom: 1.2rem;
     }
 
     .search-box {
       position: relative;
       flex: 1;
-      min-width: 240px;
+      max-width: 350px;
     }
 
     .search-box i {
@@ -262,22 +241,18 @@
 
     .search-input {
       width: 100%;
-      padding: 0.55rem 0.75rem 0.55rem 2.25rem;
+      padding: 0.5rem 0.75rem 0.5rem 2.25rem;
       border-radius: 8px;
-      border: 1px solid var(--border-color);
+      border: 1px solid #cbd5e1;
       outline: none;
-      font-size: 0.875rem;
+      font-size: 0.85rem;
     }
 
-    .search-input:focus {
-      border-color: var(--primary);
-    }
-
-    /* Table Styling */
+    /* Table Design */
     .table-card {
       background: white;
       border-radius: var(--radius);
-      border: 1px solid var(--border-color);
+      border: 1px solid #cbd5e1;
       box-shadow: var(--shadow);
       overflow: hidden;
       margin-bottom: 2rem;
@@ -290,79 +265,71 @@
     table {
       width: 100%;
       border-collapse: collapse;
-      text-align: left;
-      font-size: 0.85rem;
+      text-align: center;
+      font-size: 0.82rem;
     }
 
-    th {
-      background: #f8fafc;
-      color: #334155;
-      font-weight: 700;
-      padding: 0.85rem 0.75rem;
-      border-bottom: 1px solid var(--border-color);
-      border-right: 1px solid #f1f5f9;
-      white-space: nowrap;
-    }
-
-    td {
-      padding: 0.75rem;
-      border-bottom: 1px solid var(--border-color);
-      border-right: 1px solid #f8fafc;
-      color: var(--text-main);
+    th, td {
+      padding: 0.65rem 0.4rem;
+      border: 1px solid #cbd5e1;
       vertical-align: middle;
     }
 
-    tr:hover {
-      background-color: #f8fafc;
-    }
+    /* Header Pastel Colors */
+    .bg-general { background: #f8fafc; color: #0f172a; font-weight: 700; }
+    
+    .bg-class8 { background-color: #e0f2fe !important; color: #0369a1 !important; font-weight: 800; }
+    .bg-class8-sub { background-color: #f0f9ff !important; color: #0284c7 !important; font-weight: 600; }
+
+    .bg-class9 { background-color: #d1fae5 !important; color: #047857 !important; font-weight: 800; }
+    .bg-class9-sub { background-color: #ecfdf5 !important; color: #059669 !important; font-weight: 600; }
+
+    .bg-class10 { background-color: #f3e8ff !important; color: #6b21a8 !important; font-weight: 800; }
+    .bg-class10-sub { background-color: #faf5ff !important; color: #7e22ce !important; font-weight: 600; }
 
     .student-name {
+      text-align: left;
+      padding-left: 0.75rem;
       font-weight: 700;
       color: #0f172a;
+      white-space: nowrap;
     }
 
     .division-input {
-      width: 50px;
-      padding: 4px;
+      width: 45px;
+      padding: 3px;
       text-align: center;
-      border: 1px solid var(--border-color);
+      border: 1px solid #cbd5e1;
       border-radius: 4px;
       font-weight: 600;
       text-transform: uppercase;
     }
 
     .score-input {
-      width: 55px;
-      padding: 4px 6px;
+      width: 48px;
+      padding: 3px 2px;
       text-align: center;
-      border: 1px solid var(--border-color);
+      border: 1px solid #cbd5e1;
       border-radius: 4px;
-      font-size: 0.85rem;
+      font-size: 0.82rem;
     }
 
-    .score-input:focus, .division-input:focus {
+    .score-input:focus {
       outline: none;
       border-color: var(--primary);
       background: #f0f9ff;
     }
 
-    /* Total & Badge Styling */
-    .score-total {
-      font-weight: 800;
-      color: var(--primary-dark);
-    }
-
-    .percentage-text {
-      font-weight: 700;
-      color: #334155;
-    }
+    .score-total { font-weight: 800; color: #0369a1; }
+    .percentage-text { font-weight: 700; color: #334155; }
 
     .grade-badge {
       display: inline-block;
       padding: 3px 8px;
       border-radius: 6px;
-      font-size: 0.75rem;
+      font-size: 0.72rem;
       font-weight: 800;
+      white-space: nowrap;
     }
 
     .grade-a {
@@ -376,12 +343,12 @@
       color: #94a3b8;
     }
 
-    /* Modal Styles */
+    /* Modal */
     .modal-overlay {
       position: fixed;
       top: 0; left: 0; right: 0; bottom: 0;
       background: rgba(15, 23, 42, 0.5);
-      backdrop-filter: blur(4px);
+      backdrop-filter: blur(3px);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -399,9 +366,9 @@
     .modal {
       background: white;
       width: 90%;
-      max-width: 500px;
+      max-width: 450px;
       border-radius: var(--radius);
-      padding: 1.5rem;
+      padding: 1.25rem;
       box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
     }
 
@@ -410,42 +377,20 @@
       justify-content: space-between;
       align-items: center;
       margin-bottom: 1rem;
-      border-bottom: 1px solid var(--border-color);
-      padding-bottom: 0.75rem;
+      border-bottom: 1px solid #e2e8f0;
+      padding-bottom: 0.5rem;
     }
 
-    .modal-header h3 {
-      font-size: 1.1rem;
-      font-weight: 700;
-    }
+    .form-group { margin-bottom: 0.8rem; text-align: left; }
+    .form-group label { display: block; font-size: 0.8rem; font-weight: 700; margin-bottom: 0.3rem; }
+    .form-control { width: 100%; padding: 0.55rem; border: 1px solid #cbd5e1; border-radius: 6px; }
 
-    .form-group {
-      margin-bottom: 1rem;
-    }
-
-    .form-group label {
-      display: block;
-      font-size: 0.8rem;
-      font-weight: 700;
-      margin-bottom: 0.4rem;
-      color: #475569;
-    }
-
-    .form-control {
-      width: 100%;
-      padding: 0.6rem;
-      border: 1px solid var(--border-color);
-      border-radius: 6px;
-      font-size: 0.9rem;
-    }
-
-    /* Footer */
     footer {
       text-align: center;
-      padding: 1.5rem;
-      font-size: 0.8rem;
+      padding: 1rem;
+      font-size: 0.78rem;
       color: var(--text-muted);
-      border-top: 1px solid var(--border-color);
+      border-top: 1px solid #e2e8f0;
       background: white;
       margin-top: auto;
     }
@@ -458,7 +403,6 @@
     <div class="header-container">
       <div class="brand">
         <div class="logo-container">
-          <!-- Little KITEs Emblem SVG -->
           <svg class="logo-svg" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M 60 150 C 30 110 30 50 85 30 C 130 15 170 50 150 110 C 130 150 80 170 60 150 Z" stroke="#1e293b" stroke-width="10" fill="none"/>
             <path d="M 60 150 L 35 180 M 60 150 L 80 180" stroke="#1e293b" stroke-width="10" stroke-linecap="round"/>
@@ -487,11 +431,8 @@
 
   <!-- Main Container -->
   <main>
-    <!-- Batch Selector Tabs -->
     <div class="batch-nav-container">
-      <div class="batch-tabs" id="batchTabsContainer">
-        <!-- Dynamic Batch Tabs Injected Here -->
-      </div>
+      <div class="batch-tabs" id="batchTabsContainer"></div>
       <div id="teacherBatchControls" style="display: none;">
         <button class="btn btn-primary" onclick="openAddBatchModal()">
           <i class="fa-solid fa-plus"></i> Add New Batch
@@ -503,12 +444,10 @@
     <div class="toolbar">
       <div class="search-box">
         <i class="fa-solid fa-magnifying-glass"></i>
-        <input type="text" id="searchInput" class="search-input" placeholder="Search by name, admission no, or division..." oninput="renderTable()">
+        <input type="text" id="searchInput" class="search-input" placeholder="Search student name, adm no..." oninput="renderTable()">
       </div>
 
-      <div style="display: flex; gap: 0.5rem;" id="teacherStudentControls">
-        <!-- Displayed in Teacher Mode -->
-      </div>
+      <div style="display: flex; gap: 0.5rem;" id="teacherStudentControls"></div>
     </div>
 
     <!-- Evaluation Table Card -->
@@ -517,39 +456,49 @@
         <table id="evaluationTable">
           <thead>
             <tr>
-              <th rowspan="2">#</th>
-              <th rowspan="2">Adm No</th>
-              <th rowspan="2">Student Name</th>
-              <th rowspan="2">Div</th>
-              <th colspan="2" style="text-align: center; background: #f5efb5;">Class 8 (100)</th>
-              <th colspan="6" style="text-align: center; background: #e9d5f0">Class 9 (180)</th>
-              <th colspan="4" style="text-align: center; background: #f7e1be;">Class 10 (220)</th>
-              <th rowspan="2">Total Score</th>
-              <th rowspan="2">%</th>
-              <th rowspan="2">Grade</th>
-              <th rowspan="2" class="teacher-only-col" style="display: none;">Actions</th>
+              <th rowspan="2" class="bg-general">#</th>
+              <th rowspan="2" class="bg-general">Adm No</th>
+              <th rowspan="2" class="bg-general">Student Name</th>
+              <th rowspan="2" class="bg-general">Div</th>
+              
+              <!-- Light Blue for Class 8 -->
+              <th colspan="2" class="bg-class8">Class 8 (100)</th>
+              
+              <!-- Light Green for Class 9 (Updated 9 columns -> Total 180) -->
+              <th colspan="9" class="bg-class9">Class 9 (180)</th>
+              
+              <!-- Light Purple for Class 10 -->
+              <th colspan="4" class="bg-class10">Class 10 (220)</th>
+              
+              <th rowspan="2" class="bg-general">Total Score</th>
+              <th rowspan="2" class="bg-general">%</th>
+              <th rowspan="2" class="bg-general">Grade</th>
+              <th rowspan="2" class="bg-general teacher-only-col" style="display: none;">Actions</th>
             </tr>
             <tr>
               <!-- Class 8 -->
-              <th title="Routine Classes (15 x 5 = 75)">Routine (75)</th>
-              <th title="Digital Portfolio (25)">Portfolio (25)</th>
-              <!-- Class 9 -->
-              <th title="Routine Classes (15 x 5 = 75)">Routine (75)</th>
-              <th title="School Camp Phase 1 (10)">Camp P1 (10)</th>
-              <th title="School Camp Phase 1 Assign (15)">P1 Assign (15)</th>
-              <th title="School Camp Phase 2 (10)">Camp P2 (10)</th>
-              <th title="School Camp Phase 2 Assign (15)">P2 Assign (15)</th>
-              <th title="Digital Portfolio (25)">Portfolio (25)</th>
+              <th class="bg-class8-sub" title="Routine (75)">Routine (75)</th>
+              <th class="bg-class8-sub" title="Portfolio (25)">Portfolio (25)</th>
+              
+              <!-- Class 9 (With New Camps) -->
+              <th class="bg-class9-sub" title="Routine (75)">Routine (75)</th>
+              <th class="bg-class9-sub" title="Camp P1 (10)">Camp P1 (10)</th>
+              <th class="bg-class9-sub" title="P1 Assign (15)">P1 Assign (15)</th>
+              <th class="bg-class9-sub" title="Camp P2 (10)">Camp P2 (10)</th>
+              <th class="bg-class9-sub" title="P2 Assign (15)">P2 Assign (15)</th>
+              <th class="bg-class9-sub" title="S-District Camp (10)">S-Dist Camp (10)</th>
+              <th class="bg-class9-sub" title="District Camp (10)">Dist Camp (10)</th>
+              <th class="bg-class9-sub" title="State Camp (10)">State Camp (10)</th>
+              <th class="bg-class9-sub" title="Portfolio (25)">Portfolio (25)</th>
+              
               <!-- Class 10 -->
-              <th title="Personal Assignment (100)">Personal (100)</th>
-              <th title="Group Assignment (80)">Group (80)</th>
-              <th title="Training Other Children (20)">Training (20)</th>
-              <th title="Other IT Activities (20)">Other IT (20)</th>
+              <th class="bg-class10-sub" title="Personal (100)">Personal (100)</th>
+              <th class="bg-class10-sub" title="Group (80)">Group (80)</th>
+              <th class="bg-class10-sub" title="Training (20)">Training (20)</th>
+              <th class="bg-class10-sub" title="Other IT (20)">Other IT (20)</th>
             </tr>
           </thead>
-          <tbody id="studentTableBody">
-            <!-- Dynamic Student Rows -->
-          </tbody>
+          <tbody id="studentTableBody"></tbody>
         </table>
       </div>
     </div>
@@ -557,7 +506,7 @@
 
   <!-- Footer -->
   <footer>
-    <p>&copy; Little KITEs IT Club - GHS Trikkulam | Real-Time Sync Powered by Firebase</p>
+    <p>&copy; Little KITEs IT Club - GHS Trikkulam | Real-Time Live Sync Active</p>
   </footer>
 
   <!-- PIN Modal -->
@@ -626,9 +575,8 @@
     </div>
   </div>
 
-  <!-- Application Logic & Firebase Configuration -->
+  <!-- Realtime Script & Logic -->
   <script>
-    // Exact Firebase Configuration
     const firebaseConfig = {
       apiKey: "AIzaSyAWCgfZYI-doImtWgfzP5GREvyMUBaUsQM",
       authDomain: "lk-ghs-trikkulam.firebaseapp.com",
@@ -639,23 +587,20 @@
       appId: "1:903661112200:web:64d02c87591386fe93083d"
     };
 
-    // Initialize Firebase
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
 
-    // App State
     let isTeacher = false;
     const TEACHER_PIN = "1234";
     let activeBatchKey = "batch_2026_2029";
     
-    // Evaluation Scheme Maximum Weights
+    // Evaluation Scheme Weight Matrix (Updated Total 180 for Class 9)
     const SCHEME_MAX = {
       c8_r: 75, c8_p: 25,
-      c9_r: 75, c9_p1: 10, c9_a1: 15, c9_p2: 10, c9_a2: 15, c9_p: 25,
+      c9_r: 75, c9_p1: 10, c9_a1: 15, c9_p2: 10, c9_a2: 15, c9_sdist: 10, c9_dist: 10, c9_state: 10, c9_p: 25,
       c10_p: 100, c10_g: 80, c10_t: 20, c10_o: 20
     };
 
-    // Default Pre-loaded Batch Rosters
     const initialBatches = {
       "batch_2026_2029": {
         title: "2026-29 Batch",
@@ -766,7 +711,6 @@
 
     let appData = {};
 
-    // App Initialization & Real-Time Sync Setup
     window.addEventListener('DOMContentLoaded', () => {
       initRealtimeSync();
     });
@@ -774,11 +718,8 @@
     function initRealtimeSync() {
       const syncBadge = document.getElementById('syncBadge');
       const syncText = document.getElementById('syncText');
-
-      // Reference to Firebase Database root
       const appRef = db.ref('little_kites_app_data');
 
-      // Sync state listener
       db.ref('.info/connected').on('value', (snap) => {
         if (snap.val() === true) {
           syncBadge.classList.remove('syncing');
@@ -789,18 +730,15 @@
         }
       });
 
-      // Realtime Data Listener
       appRef.on('value', (snapshot) => {
         const val = snapshot.val();
         if (val) {
           appData = val;
         } else {
-          // Initialize DB with default batches if empty
           appData = initialBatches;
           appRef.set(initialBatches);
         }
         
-        // Ensure active batch exists
         const keys = Object.keys(appData);
         if (keys.length > 0 && !appData[activeBatchKey]) {
           activeBatchKey = keys[0];
@@ -811,12 +749,10 @@
       });
     }
 
-    // Save changes live to Firebase
     function saveToFirebase() {
       db.ref('little_kites_app_data').set(appData);
     }
 
-    // Teacher Mode Logic
     function toggleTeacherMode() {
       if (!isTeacher) {
         document.getElementById('pinInput').value = '';
@@ -857,7 +793,6 @@
         studentControls.innerHTML = '';
       }
 
-      // Toggle action columns
       document.querySelectorAll('.teacher-only-col').forEach(col => {
         col.style.display = isTeacher ? 'table-cell' : 'none';
       });
@@ -865,7 +800,6 @@
       renderTable();
     }
 
-    // Modal Helpers
     function closeModal(id) {
       document.getElementById(id).classList.remove('active');
     }
@@ -878,7 +812,6 @@
       document.getElementById('addStudentModal').classList.add('active');
     }
 
-    // Dynamic Tab Navigation
     function renderBatchTabs() {
       const container = document.getElementById('batchTabsContainer');
       container.innerHTML = '';
@@ -897,7 +830,6 @@
       });
     }
 
-    // Calculation & Table Rendering Logic
     function renderTable() {
       const tbody = document.getElementById('studentTableBody');
       tbody.innerHTML = '';
@@ -908,7 +840,6 @@
       const searchTerm = document.getElementById('searchInput').value.toLowerCase();
 
       currentBatch.students.forEach((student, index) => {
-        // Search Filter
         if (
           searchTerm &&
           !student.name.toLowerCase().includes(searchTerm) &&
@@ -920,7 +851,6 @@
 
         const scores = student.scores || {};
 
-        // Calculate Dynamic Evaluated Max & Total Score Earned
         let totalScore = 0;
         let dynamicMax = 0;
 
@@ -932,7 +862,6 @@
           }
         });
 
-        // Calculate Percentage against Evaluated Components
         let percentage = 0;
         if (dynamicMax > 0) {
           percentage = (totalScore / dynamicMax) * 100;
@@ -952,25 +881,28 @@
             }
           </td>
           
-          <!-- Class 8 Scores -->
+          <!-- Class 8 -->
           ${renderScoreCell(index, 'c8_r', scores.c8_r, 75)}
           ${renderScoreCell(index, 'c8_p', scores.c8_p, 25)}
           
-          <!-- Class 9 Scores -->
+          <!-- Class 9 (With New Camps) -->
           ${renderScoreCell(index, 'c9_r', scores.c9_r, 75)}
           ${renderScoreCell(index, 'c9_p1', scores.c9_p1, 10)}
           ${renderScoreCell(index, 'c9_a1', scores.c9_a1, 15)}
           ${renderScoreCell(index, 'c9_p2', scores.c9_p2, 10)}
           ${renderScoreCell(index, 'c9_a2', scores.c9_a2, 15)}
+          ${renderScoreCell(index, 'c9_sdist', scores.c9_sdist, 10)}
+          ${renderScoreCell(index, 'c9_dist', scores.c9_dist, 10)}
+          ${renderScoreCell(index, 'c9_state', scores.c9_state, 10)}
           ${renderScoreCell(index, 'c9_p', scores.c9_p, 25)}
           
-          <!-- Class 10 Scores -->
+          <!-- Class 10 -->
           ${renderScoreCell(index, 'c10_p', scores.c10_p, 100)}
           ${renderScoreCell(index, 'c10_g', scores.c10_g, 80)}
           ${renderScoreCell(index, 'c10_t', scores.c10_t, 20)}
           ${renderScoreCell(index, 'c10_o', scores.c10_o, 20)}
           
-          <!-- Dynamic Results -->
+          <!-- Dynamic Total & Percentage -->
           <td class="score-total">${dynamicMax > 0 ? totalScore : '-'}</td>
           <td class="percentage-text">${dynamicMax > 0 ? percentage.toFixed(1) + '%' : '-'}</td>
           <td>
@@ -981,7 +913,7 @@
           </td>
           
           <td class="teacher-only-col" style="display: ${isTeacher ? 'table-cell' : 'none'};">
-            <button class="btn btn-danger" style="padding: 4px 8px; font-size: 0.75rem;" onclick="deleteStudent(${index})">
+            <button class="btn btn-danger" style="padding: 3px 6px; font-size: 0.72rem;" onclick="deleteStudent(${index})">
               <i class="fa-solid fa-trash"></i>
             </button>
           </td>
@@ -998,7 +930,6 @@
       }
     }
 
-    // Data Modification Actions (Live Sync Triggered)
     function updateStudentDiv(index, val) {
       if (!isTeacher) return;
       appData[activeBatchKey].students[index].div = val;
