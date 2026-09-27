@@ -845,14 +845,16 @@
       });
     }
 
-    function renderTable() {
+   function renderTable() {
       const tbody = document.getElementById('studentTableBody');
+      if (!tbody) return;
       tbody.innerHTML = '';
 
       const currentBatch = appData[activeBatchKey];
       if (!currentBatch || !currentBatch.students) return;
 
-      const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+      const searchInput = document.getElementById('searchInput');
+      const searchTerm = searchInput ? searchInput.value.toLowerCase() : '';
 
       // 1. വിദ്യാർത്ഥികളെ സ്കോർ കണക്കാക്കി ടോട്ടൽ കൂടുതൽ ഉള്ളവർ മുകളിൽ വരുന്ന വിധം Sort ചെയ്യുന്നു
       const sortedStudents = [...currentBatch.students].map((student, originalIndex) => {
@@ -860,21 +862,23 @@
         let totalScore = 0;
         let dynamicMax = 0;
 
-        Object.keys(SCHEME_MAX).forEach(field => {
-          const val = parseFloat(scores[field]);
-          if (!isNaN(val)) {
-            totalScore += val;
-            dynamicMax += SCHEME_MAX[field];
-          }
-        });
+        if (typeof SCHEME_MAX !== 'undefined') {
+          Object.keys(SCHEME_MAX).forEach(field => {
+            const val = parseFloat(scores[field]);
+            if (!isNaN(val)) {
+              totalScore += val;
+              dynamicMax += SCHEME_MAX[field];
+            }
+          });
+        }
 
         return {
           ...student,
-          originalIndex, // Delete/Update എന്നിവയ്ക്ക് വേണ്ട ഒറിജിനൽ ഇൻഡക്സ്
+          originalIndex,
           totalScore,
           dynamicMax
         };
-      }).sort((a, b) => b.totalScore - a.totalScore); // ടോട്ടൽ കൂടുതൽ ഉള്ളവർ ആദ്യം
+      }).sort((a, b) => b.totalScore - a.totalScore);
 
       // 2. Sort ചെയ്ത ലിസ്റ്റ് ടേബിളിൽ Render ചെയ്യുന്നു
       sortedStudents.forEach((student, index) => {
@@ -898,56 +902,6 @@
 
         const tr = document.createElement('tr');
         tr.innerHTML = `
-          <td>${index + 1}</td>
-          <td>${student.adm}</td>
-          <td class="student-name">${student.name}</td>
-          <td>
-            ${isTeacher 
-              ? `<input type="text" class="division-input" value="${student.div ||''}" onchange="updateStudentDiv(${studentIndex}, this.value)">`
-              : `<strong>${student.div || '-'}</strong>`
-            }
-          </td>
-          
-          <!-- Class 8 -->
-          ${renderScoreCell(studentIndex, 'c8_r', scores.c8_r, 75)}
-          ${renderScoreCell(studentIndex, 'c8_p', scores.c8_p, 25)}
-          
-          <!-- Class 9 -->
-          ${renderScoreCell(studentIndex, 'c9_r', scores.c9_r, 75)}
-          ${renderScoreCell(studentIndex, 'c9_p1', scores.c9_p1, 10)}
-          ${renderScoreCell(studentIndex, 'c9_a1', scores.c9_a1, 15)}
-          ${renderScoreCell(studentIndex, 'c9_p2', scores.c9_p2, 10)}
-          ${renderScoreCell(studentIndex, 'c9_a2', scores.c9_a2, 15)}
-          ${renderScoreCell(studentIndex, 'c9_sdist', scores.c9_sdist, 10)}
-          ${renderScoreCell(studentIndex, 'c9_dist', scores.c9_dist, 10)}
-          ${renderScoreCell(studentIndex, 'c9_state', scores.c9_state, 10)}
-          ${renderScoreCell(studentIndex, 'c9_p', scores.c9_p, 25)}
-          
-          <!-- Class 10 -->
-          ${renderScoreCell(studentIndex, 'c10_p', scores.c10_p, 100)}
-          ${renderScoreCell(studentIndex, 'c10_g', scores.c10_g, 80)}
-          ${renderScoreCell(studentIndex, 'c10_t', scores.c10_t, 20)}
-          ${renderScoreCell(studentIndex, 'c10_o', scores.c10_o, 20)}
-          
-          <!-- Dynamic Total & Percentage -->
-          <td class="score-total">${student.dynamicMax > 0 ? student.totalScore : '-'}</td>
-          <td class="percentage-text">${student.dynamicMax > 0 ? percentage.toFixed(1) + '%' : '-'}</td>
-          <td>
-            ${isAGrade 
-              ? `<span class="grade-badge grade-a"><i class="fa-solid fa-star"></i> A Grade</span>`
-              : `<span class="grade-badge grade-none">-</span>`
-            }
-          </td>
-          
-          <td class="teacher-only-col" style="display: ${isTeacher ? 'table-cell' : 'none'};">
-            <button class="btn btn-danger" style="padding: 3px 6px; font-size: 0.72rem;" onclick="deleteStudent(${studentIndex})">
-              <i class="fa-solid fa-trash"></i>
-            </button>
-          </td>
-        `;
-        tbody.appendChild(tr);
-      });
-    }
         const scores = student.scores || {};
 
         let totalScore = 0;
