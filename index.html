@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>LITTLE KITEs Evaluation Tracker - GHS Trikkulam</title>
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-  <!-- PDF Generation Libraries -->
+  <!-- PDF Libraries -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
 
@@ -178,6 +178,7 @@
       border-bottom: 2px solid var(--border);
       padding-bottom: 0.5rem;
       overflow-x: auto;
+      min-height: 40px;
     }
 
     .tab-btn {
@@ -330,7 +331,22 @@
     .grade-a { background: #dcfce7; color: #15803d; }
     .grade-none { background: #f1f5f9; color: #94a3b8; }
 
-    /* Modal */
+    /* Sl No (#) Column Freeze/Sticky */
+    table tbody tr td:first-child,
+    table thead tr:first-child th:first-child {
+      position: sticky;
+      left: 0;
+      background-color: #ffffff !important;
+      z-index: 10;
+      box-shadow: 2px 0 5px rgba(0, 0, 0, 0.08);
+    }
+
+    table thead tr:first-child th:first-child {
+      z-index: 11;
+      background-color: #f8fafc !important;
+    }
+
+    /* Modal Styling */
     .modal-overlay {
       position: fixed;
       top: 0; left: 0; right: 0; bottom: 0;
@@ -378,7 +394,7 @@
       margin-bottom: 0.25rem;
     }
 
-    .form-group input, .form-group select {
+    .form-group input {
       width: 100%;
       padding: 0.5rem;
       border: 1px solid var(--border);
@@ -398,21 +414,6 @@
       font-size: 0.75rem;
       color: var(--text-muted);
       padding: 1rem 0;
-    }
-
-    /* 2. Sl. No (#) കോളം മാത്രം Freeze / Sticky ആക്കാനുള്ള CSS */
-    table tbody tr td:first-child,
-    table thead tr:first-child th:first-child {
-      position: sticky;
-      left: 0;
-      background-color: #ffffff !important;
-      z-index: 10;
-      box-shadow: 2px 0 5px rgba(0, 0, 0, 0.08);
-    }
-
-    table thead tr:first-child th:first-child {
-      z-index: 11;
-      background-color: #f8fafc !important;
     }
   </style>
 </head>
@@ -510,7 +511,7 @@
     © Little KITEs IT Club - GHS Trikkulam | Real-Time Live Sync Active
   </footer>
 
-  <!-- Add Student Modal -->
+  <!-- Modal: Add Student -->
   <div class="modal-overlay" id="addStudentModal">
     <div class="modal">
       <div class="modal-header">
@@ -536,7 +537,7 @@
     </div>
   </div>
 
-  <!-- Add Batch Modal -->
+  <!-- Modal: Add Batch -->
   <div class="modal-overlay" id="addBatchModal">
     <div class="modal">
       <div class="modal-header">
@@ -566,7 +567,17 @@
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
 
-    let appData = {};
+    // ഡിഫോൾട്ട് സാമ്പിൾ ഡാറ്റ
+    let appData = {
+      "2024-27 Batch": {
+        students: [
+          { adm: "25401", name: "Ananya K", div: "A", scores: { c8_r: 70, c8_p: 22 } },
+          { adm: "25402", name: "Muhammed Raihan", div: "B", scores: { c8_r: 65, c8_p: 20 } }
+        ]
+      },
+      "2025-28 Batch": { students: [] }
+    };
+
     let activeBatchKey = "2024-27 Batch";
     let isTeacher = false;
 
@@ -577,8 +588,11 @@
     };
 
     window.addEventListener('DOMContentLoaded', () => {
-      initDefaultData();
-      
+      // 1. പേജ് ലോഡ് ആകുമ്പോൾ തന്നെ ടാബുകളും ടേബിളും കാണിക്കും
+      renderTabs();
+      renderTable();
+
+      // 2. ഫയർബേസിലെ വിവരങ്ങൾ റീഡ് ചെയ്ത് അപ്ഡേറ്റ് ചെയ്യും
       db.ref('trackerData').on('value', (snapshot) => {
         const data = snapshot.val();
         if (data && Object.keys(data).length > 0) {
@@ -591,22 +605,6 @@
         }
       });
     });
-
-    function initDefaultData() {
-      if (!appData || Object.keys(appData).length === 0) {
-        appData = {
-          "2024-27 Batch": {
-            students: [
-              { adm: "25401", name: "Ananya K", div: "A", scores: { c8_r: 70, c8_p: 22 } },
-              { adm: "25402", name: "Muhammed Raihan", div: "B", scores: { c8_r: 65, c8_p: 20 } }
-            ]
-          },
-          "2025-28 Batch": { students: [] }
-        };
-      }
-      renderTabs();
-      renderTable();
-    }
 
     function saveToFirebase() {
       db.ref('trackerData').set(appData);
@@ -640,21 +638,19 @@
       const searchInput = document.getElementById('searchInput');
       const searchTerm = searchInput ? searchInput.value.toLowerCase() : '';
 
-      // 1. Total Marks അടിസ്ഥാനമാക്കി സൊർട്ടിംഗ് ചെയ്യുന്നു (High to Low)
+      // മാർക്ക് നോക്കി ഉയർന്നത് ആദ്യം വരുന്ന തരത്തിൽ Sorting
       const sortedStudents = [...currentBatch.students].map((student, originalIndex) => {
         const scores = student.scores || {};
         let totalScore = 0;
         let dynamicMax = 0;
 
-        if (typeof SCHEME_MAX !== 'undefined') {
-          Object.keys(SCHEME_MAX).forEach(field => {
-            const val = parseFloat(scores[field]);
-            if (!isNaN(val)) {
-              totalScore += val;
-              dynamicMax += SCHEME_MAX[field];
-            }
-          });
-        }
+        Object.keys(SCHEME_MAX).forEach(field => {
+          const val = parseFloat(scores[field]);
+          if (!isNaN(val)) {
+            totalScore += val;
+            dynamicMax += SCHEME_MAX[field];
+          }
+        });
 
         return {
           ...student,
@@ -662,7 +658,7 @@
           totalScore,
           dynamicMax
         };
-      }).sort((a, b) => b.totalScore - a.totalScore); // ടോട്ടൽ സ്കോർ ഉയർന്നത് ആദ്യം വരും
+      }).sort((a, b) => b.totalScore - a.totalScore);
 
       sortedStudents.forEach((student, index) => {
         if (
@@ -716,11 +712,10 @@
           ${renderScoreCell(studentIndex, 'c10_t', scores.c10_t, 20)}
           ${renderScoreCell(studentIndex, 'c10_o', scores.c10_o, 20)}
           
-          <!-- Dynamic Total & Percentage -->
           <td class="score-total">${student.dynamicMax > 0 ? student.totalScore : '-'}</td>
           <td class="percentage-text">${student.dynamicMax > 0 ? percentage.toFixed(1) + '%' : '-'}</td>
           <td>
-            ${isAGrade 
+           ${isAGrade 
               ? `<span class="grade-badge grade-a"><i class="fa-solid fa-star"></i> A Grade</span>`
               : `<span class="grade-badge grade-none">-</span>`
             }
@@ -864,7 +859,6 @@
       downloadAnchor.remove();
     }
 
-    // 3. ഓരോ ബാച്ചിന്റെയും PDF Export ഫംഗ്ഷൻ
     function exportPDF() {
       const { jsPDF } = window.jspdf;
       const doc = new jsPDF('landscape');
@@ -884,7 +878,6 @@
         return;
       }
 
-      // ടോട്ടൽ നോക്കി സൊർട്ട് ചെയ്ത ശേഷം PDF ഡാറ്റ ഉണ്ടാക്കുന്നു
       const sorted = [...currentBatch.students].map(student => {
         const scores = student.scores || {};
         let c8 = (parseFloat(scores.c8_r) || 0) + (parseFloat(scores.c8_p) || 0);
