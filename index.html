@@ -274,7 +274,21 @@
       border: 1px solid #cbd5e1;
       vertical-align: middle;
     }
+    /* Serial Number (#) Column Freeze/Sticky */
+#evaluationTable tbody tr td:first-child,
+#evaluationTable thead tr:first-child th:first-child {
+  position: sticky;
+  left: 0;
+  background-color: #ffffff !important;
+  z-index: 10;
+  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.08);
+}
 
+/* Header (#) Sticky Fix */
+#evaluationTable thead tr:first-child th:first-child {
+  z-index: 11;
+  background-color: #f8fafc !important;
+}
     /* Header Pastel Colors */
     .bg-general { background: #f8fafc; color: #0f172a; font-weight: 700; }
     
