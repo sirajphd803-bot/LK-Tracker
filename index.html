@@ -544,7 +544,6 @@
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 
   <script>
-    // Firebase Config
     const firebaseConfig = {
       databaseURL: "https://lk-tracker-default-rtdb.firebaseio.com"
     };
@@ -562,27 +561,38 @@
       c10_p: 100, c10_g: 80, c10_t: 20, c10_o: 20
     };
 
-    // Firebase Sync
-    db.ref('trackerData').on('value', (snapshot) => {
-      const data = snapshot.val();
-      if (data) {
-        appData = data;
-        if (!appData[activeBatchKey]) {
-          activeBatchKey = Object.keys(appData)[0] || "2024-27 Batch";
+    // Initialize Page Data
+    window.addEventListener('DOMContentLoaded', () => {
+      initDefaultData();
+      
+      // Firebase Live Sync
+      db.ref('trackerData').on('value', (snapshot) => {
+        const data = snapshot.val();
+        if (data && Object.keys(data).length > 0) {
+          appData = data;
+          if (!appData[activeBatchKey]) {
+            activeBatchKey = Object.keys(appData)[0] || "2024-27 Batch";
+          }
+          renderTabs();
+          renderTable();
         }
-        renderTabs();
-        renderTable();
-      } else {
-        initDefaultData();
-      }
+      });
     });
 
     function initDefaultData() {
-      appData = {
-        "2024-27 Batch": { students: [] },
-        "2025-28 Batch": { students: [] }
-      };
-      saveToFirebase();
+      if (!appData || Object.keys(appData).length === 0) {
+        appData = {
+          "2024-27 Batch": {
+            students: [
+              { adm: "25401", name: "Ananya K", div: "A", scores: { c8_r: 70, c8_p: 22 } },
+              { adm: "25402", name: "Muhammed Raihan", div: "B", scores: { c8_r: 65, c8_p: 20 } }
+            ]
+          },
+          "2025-28 Batch": { students: [] }
+        };
+      }
+      renderTabs();
+      renderTable();
     }
 
     function saveToFirebase() {
@@ -591,6 +601,7 @@
 
     function renderTabs() {
       const container = document.getElementById('batchTabs');
+      if (!container) return;
       container.innerHTML = '';
       Object.keys(appData).forEach(batchKey => {
         const btn = document.createElement('button');
@@ -605,7 +616,6 @@
       });
     }
 
-    // Sort ചെയ്യുന്നതും ടേബിൾ Render ചെയ്യുന്നതുമായ പ്രധാന ഫംഗ്ഷൻ
     function renderTable() {
       const tbody = document.getElementById('studentTableBody');
       if (!tbody) return;
@@ -617,7 +627,6 @@
       const searchInput = document.getElementById('searchInput');
       const searchTerm = searchInput ? searchInput.value.toLowerCase() : '';
 
-      // 1. വിദ്യാർത്ഥികളെ സ്കോർ കണക്കാക്കി ടോട്ടൽ കൂടുതൽ ഉള്ളവർ മുകളിൽ വരുന്ന വിധം Sort ചെയ്യുന്നു
       const sortedStudents = [...currentBatch.students].map((student, originalIndex) => {
         const scores = student.scores || {};
         let totalScore = 0;
@@ -639,9 +648,8 @@
           totalScore,
           dynamicMax
         };
-      }).sort((a, b) => b.totalScore - a.totalScore); // ടോട്ടൽ കൂടുതൽ ഉള്ളവർ മുകളിൽ വരും
+      }).sort((a, b) => b.totalScore - a.totalScore);
 
-      // 2. Sort ചെയ്ത ലിസ്റ്റ് ടേബിളിൽ Render ചെയ്യുന്നു
       sortedStudents.forEach((student, index) => {
         if (
           searchTerm &&
@@ -700,13 +708,6 @@
           <td>
             ${isAGrade 
               ? `<span class="grade-badge grade-a"><i class="fa-solid fa-star"></i> A Grade</span>`
-              : `<span class="grade-badge grade-none">-</span>`
-            }
-          </td>
-          
-          <td class="teacher-only-col" style="display: ${isTeacher ? 'table-cell' : 'none'};">
-            <button class="btn btn-danger" style="padding: 3px 6px; font-size: 0.72rem;" onclick="deleteStudent(${studentIndex})">
-              <i class="fa-solid fa-star"></i> A Grade</span>`
               : `<span class="grade-badge grade-none">-</span>`
             }
           </td>
@@ -807,6 +808,7 @@
       });
 
       saveToFirebase();
+      renderTable();
       closeModal('addStudentModal');
       document.getElementById('newAdmNo').value = '';
       document.getElementById('newName').value = '';
@@ -821,6 +823,8 @@
         appData[batchKey] = { students: [] };
         activeBatchKey = batchKey;
         saveToFirebase();
+        renderTabs();
+        renderTable();
         closeModal('addBatchModal');
         document.getElementById('newBatchKey').value = '';
       } else {
@@ -832,6 +836,7 @@
       if (confirm("Are you sure you want to delete this student?")) {
         appData[activeBatchKey].students.splice(index, 1);
         saveToFirebase();
+        renderTable();
       }
     }
 
